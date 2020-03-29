@@ -5,7 +5,6 @@ library(plyr)
 library(tidyverse) 
 library(lme4)
 
-setwd("D:/Curriculum/02_ Articulos/00 In progress/221 tabonuco")
 leafdecay <- read.csv("LeafLitterDecomp.csv")
 leafdecay
 
