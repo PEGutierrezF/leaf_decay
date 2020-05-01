@@ -121,8 +121,16 @@ remaing
 
 # Slope -------------------------------------------------------------------
 
-fits <- lmList(log(AFDMRemaining) ~ Day | Treatment , data=remaing)
-summary(fits)
+  library(broom)
+  
+  remaing
+
+  fitted_models = remaing  %>% group_by(Treatment, Replicate) %>% do(model = lm(log(AFDMRemaining) ~ Day, data = .))
+  fitted_models$model 
+  fitted_models %>% tidy(model)
+  fitted_models %>% glance(model)
+  fitted_models %>% augment(model)
+
 
 
 
