@@ -3,7 +3,7 @@
 
 head(leafdecay)
 
-AFDM1 <- function(data,
+AFDM <- function(data,
                  InitDryW,
                  FinalDryW,
                  FractIntW,
@@ -29,15 +29,17 @@ AFDM1 <- function(data,
     mutate_(AFDM_Initial = lazyeval::interp (~a*b, a= as.name("IDWc"), b= as.name("AFDMFraction"))) %>% # AFDM in the initial sample
     mutate_(AFDM_Final = lazyeval::interp (~a*b, a= as.name(FinalDryW), b= as.name("AFDMFraction")))%>%
     mutate_(AFDMRemaining = lazyeval::interp (~(a/b)*100, a= as.name("AFDM_Final"), b= as.name("AFDM_Initial")))
+  return(.)
+}  
   
   AFDM1 <- select_(.,Day, Replicate, Treatment, "AFDMRemaining")
   AFDM2 <- arrange(AFDM1, Treatment, Replicate)
   
-  return(AFDM2)
+  return(AFDM)
 }
 
 
-remaing <- AFDM1 (data=leafdecay,
+remaing <- AFDM(data=leafdecay,
                  InitDryW= "Initial_Dry_Weight",
                  FinalDryW = "Final_Dry_Weight",
                  FractIntW ="Fraction_Initial_Weight",

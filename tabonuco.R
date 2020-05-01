@@ -72,11 +72,10 @@ AFDM <- function(data,
   
   meanControl <- mean(control$Difference, na.rm = TRUE)
 
-    
 # Corrects the initial dry mass by manipulation
   . <- data %>%
     filter(Treatment != "Control") %>%
-    mutate_(IDWc = lazyeval::interp (~a/b, a=as.name(InitDryW), b=as.name("meanControl"))) # Corrects dry mass (laboratory) for mass lost from handling
+    mutate_(IDWc = lazyeval::interp (~a*b, a=as.name(InitDryW), b=as.name("meanControl"))) %>% # Corrects dry mass (laboratory) for mass lost from handling
 
 # Calculate the AFDM in the subsample
     mutate_(AFDMFraction = lazyeval::interp (~(a-b)/a, a= as.name (FractIntW), b= as.name (FractFinW))) %>%   # AFDM in the subsample
@@ -109,7 +108,6 @@ remaing <- AFDM (data=leafdecay,
               Treatment ="Treatment",
               Day= "Day",
               Replicate="Replicate")
-
 remaing
 
 # Slope -------------------------------------------------------------------
