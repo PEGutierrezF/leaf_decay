@@ -110,9 +110,18 @@ remaing <- AFDM (data=leafdecay,
               Replicate="Replicate")
 remaing
 
+
+# Adding Replicate 0 to dataframe -----------------------------------------
+
+ .<-leafdecay%>%
+              filter(Treatment != "Control")
+  totaltreatmen <- count(., vars = "Treatment")
+
+
+
 # Slope -------------------------------------------------------------------
 
-fits <- lmList(log(AFDMRemaining) ~ Day | Treatment , data=AFDM2)
+fits <- lmList(log(AFDMRemaining) ~ Day | Treatment , data=remaing)
 summary(fits)
 
 
