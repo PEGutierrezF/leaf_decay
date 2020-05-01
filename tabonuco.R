@@ -1,4 +1,15 @@
 
+
+
+
+#--------------------------------------------
+# Leaf litter decomposition analysis
+# 30 Apr 2020
+#PEGF
+#--------------------------------------------
+#
+
+
 library(rlang)
 library(dplyr)
 library(plyr)
@@ -37,43 +48,74 @@ control <- manipulation(data= leafdecay,
                      Treatment = "Treatment")
 control
 
-
-
-
-
-
-
 # Percentage of AFDM Remaining --------------------------------------------
 
+# IDWc= Initial drya mass corrected by manipulations
+# AFDMFraction = Amount of AFDM in a subsample
 
-
-AFDM <- function (){
-  wControl <- example %>% 
-        filter(Treatment != "Control") %>%
-        mutate(InitialDryMass = Initial_Dry_Weight*ControlManipulation) %>% # Corrects dry mass (laboratory) for mass lost from handling
-        mutate(AFDMFraction =  (Fraction_Initial_Weight - Fraction_Final_Weight)/Fraction_Initial_Weight)%>%   # AFDM in the subsample
-        mutate(AFDM_Initial = InitialDryMass*AFDMFraction) %>%   # AFDM in the initial sample
-        mutate(AFDM_Final = Final_Dry_Weight*AFDMFraction) %>%   #AFDM in the Final sample
-        mutate(AFDMRemaining = (AFDM_Final/AFDM_Initial*100))    # % AFDM Remaining
-   AFDM1 <- select(wControl, Day, Replicate, Treatment,AFDMRemaining)
-   AFDM2 <- arrange(AFDM1, Treatment, Replicate)
+AFDM <- function(data,
+                    InitDryW,
+                    FinalDryW,
+                    FractIntW,
+                    FractFinW,
+                    Treatment,
+                    Day,
+                    Replicate,
+                    Difference,
+                    control) {
   
-  return (AFDM2)
-  }
+# Calculate the control by manupulation
+  control <- data %>% 
+    filter(Treatment == "Control") %>%
+    select_(InitDryW,FinalDryW) %>%
+    mutate_(Difference = lazyeval::interp (~a/b,  a=as.name(FinalDryW),b=as.name(InitDryW)))
+  
+  meanControl <- mean(control$Difference, na.rm = TRUE)
+
+    
+# Corrects the initial dry mass by manipulation
+  . <- data %>%
+    filter(Treatment != "Control") %>%
+    mutate_(IDWc = lazyeval::interp (~a/b, a=as.name(InitDryW), b=as.name("meanControl"))) # Corrects dry mass (laboratory) for mass lost from handling
+
+# Calculate the AFDM in the subsample
+    mutate_(AFDMFraction = lazyeval::interp (~(a-b)/a, a= as.name (FractIntW), b= as.name (FractFinW))) %>%   # AFDM in the subsample
+
+# Calculate the AFDM in the corrected initial mass and in the final mass   
+      mutate_(AFDM_Initial = lazyeval::interp (~a*b, a= as.name("IDWc"), b= as.name("AFDMFraction"))) %>% # AFDM in the initial sample
+      mutate_(AFDM_Final = lazyeval::interp (~a*b, a= as.name(FinalDryW), b= as.name("AFDMFraction"))) %>%   #AFDM in the Final sample         
+
+# Calculate the percentage of remaining mass
+      mutate_(AFDMRemaining = lazyeval::interp (~a/b*100, a= as.name("AFDM_Final"), b= as.name("AFDM_Initial")))    # % AFDM Remaining
+
+    AFDM1 <- select_(.,Day, Replicate, Treatment, "AFDMRemaining")
+    AFDM2 <- arrange(AFDM1, Treatment, Replicate)
+    
+    return(AFDM2)
+}
 
 AFDM()
 
+
+
+# Example AFDM Classen-R 2019 ---------------------------------------------
+
+leafdecay
+remaing <- AFDM (data=leafdecay,
+              InitDryW= "Initial_Dry_Weight",
+              FinalDryW = "Final_Dry_Weight",
+              FractIntW ="Fraction_Initial_Weight",
+              FractFinW = "Fraction_Final_Weight",
+              Treatment ="Treatment",
+              Day= "Day",
+              Replicate="Replicate")
+
+remaing
 
 # Slope -------------------------------------------------------------------
 
 fits <- lmList(log(AFDMRemaining) ~ Day | Treatment , data=AFDM2)
 summary(fits)
-
-
-AFDM2 %>% add_row(Rank = 0, Country = "Nepal",   
-                                      Population.2019 = 28608710,   
-                                      Population.2018 = 28095714,    
-                                      Growth.Rate = "1.83%") 
 
 
 
