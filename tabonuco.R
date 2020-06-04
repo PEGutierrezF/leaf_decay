@@ -113,10 +113,10 @@ remaing
 
 # Adding Replicate 0 to dataframe -----------------------------------------
 
- .<-leafdecay%>%
-              filter(Treatment != "Control")
-  totaltreatmen <- count(., vars = "Treatment")
+remaing%>%group_by(Day) 
 
+novel <- remaing %>% add_row( Day=0, AFDMRemaining=control*100, .before = -1)
+head(novel)
 
 
 # Slope -------------------------------------------------------------------
