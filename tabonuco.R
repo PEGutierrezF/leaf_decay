@@ -113,9 +113,9 @@ remaing
 
 # Adding Replicate 0 to dataframe -----------------------------------------
 
-remaing%>%group_by(Day) 
 
 novel <- remaing %>% add_row( Day=0, AFDMRemaining=control*100, .before = -1)
+novel
 head(novel)
 
 
