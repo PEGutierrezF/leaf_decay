@@ -113,10 +113,13 @@ remaing
 
 # Adding Replicate 0 to dataframe -----------------------------------------
 
+test <- remaing %>%
+  group_by(Day)%>%
+  summarise(Day= first(Replicate)) %>%
+  mutate(AFDMRemaining = 0) %>%
+  bind_rows(remaing, ) 
+test
 
-novel <- remaing %>% add_row( Day=0, AFDMRemaining=control*100, .before = -1)
-novel
-head(novel)
 
 
 # Slope -------------------------------------------------------------------
