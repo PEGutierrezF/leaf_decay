@@ -113,6 +113,7 @@ remaing
 
 # Adding Replicate 0 to dataframe -----------------------------------------
 
+#https://stackoverflow.com/questions/41350950/inserting-a-new-row-to-data-frame-for-each-group-id
 test <- remaing %>%
   group_by(Day)%>%
   summarise(Day= 0) %>%
