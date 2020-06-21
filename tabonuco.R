@@ -115,9 +115,10 @@ remaing
 
 test <- remaing %>%
   group_by(Day)%>%
-  summarise(Day= first(Replicate)) %>%
-  mutate(AFDMRemaining = 0) %>%
-  bind_rows(remaing, ) 
+  summarise(Day= 0) %>%
+  bind_rows(remaing, ) %>%
+  mutate(AFDMRemaining = 0) 
+  
 test
 
 
@@ -134,7 +135,7 @@ test
   fitted_models %>% glance(model)
   fitted_models %>% augment(model)
 
-
+  
 
 
 
