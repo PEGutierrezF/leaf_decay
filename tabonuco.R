@@ -115,16 +115,14 @@ remaing
 
 #https://stackoverflow.com/questions/41350950/inserting-a-new-row-to-data-frame-for-each-group-id
 test <- remaing %>%
-  group_by(Day=first(Day),Replicate,Treatment,Day)%>%
-  summarise(Treatment=Treatment)%>%
-  mutate(AFDMRemaining = control) 
+  group_by(Day,Replicate)%>%
+ summarise(AFDMRemaining = sum(AFDMRemaining)) 
+#%>%
+ # mutate(AFDMRemaining = 0)
   
 test
-  
-  bind_rows(remaing,test) 
 
-
-
+ bind_rows(remaing,) 
 
 # Slope -------------------------------------------------------------------
 
