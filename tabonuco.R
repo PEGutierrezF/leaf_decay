@@ -115,10 +115,14 @@ remaing
 
 #https://stackoverflow.com/questions/41350950/inserting-a-new-row-to-data-frame-for-each-group-id
 test <- remaing %>%
-  filter(Day, Replicate)%>%
-  mutate(AFDMRemaining = 0) %>%
-  bind_rows(remaing,. ) 
+  group_by(Day=first(Day),Replicate,Treatment,Day)%>%
+  summarise(Treatment=Treatment)%>%
+  mutate(AFDMRemaining = control) 
+  
 test
+  
+  bind_rows(remaing,test) 
+
 
 
 

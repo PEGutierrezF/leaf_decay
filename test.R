@@ -48,6 +48,10 @@ remaing <- AFDM(data=leafdecay,
 
 remaing
 
+df <- data.frame(a=c(1,1,1,2,2), b=1:5)
+df
 
-
+df %>%
+  group_by(a) %>%
+  do(bind_rows(data.frame(a=.$a[1], b=0), ., data.frame(a=.$a[1], b=10)))
 
