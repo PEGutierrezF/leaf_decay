@@ -9,7 +9,7 @@
 #--------------------------------------------
 #
 
-
+library(tidyr) 
 library(rlang)
 library(dplyr)
 library(plyr)
@@ -113,24 +113,21 @@ remaing
 
 # Adding Replicate 0 to dataframe -----------------------------------------
 
-#https://stackoverflow.com/questions/41350950/inserting-a-new-row-to-data-frame-for-each-group-id
 test <- remaing %>%
-  group_by(Day,Replicate)%>%
- summarise(AFDMRemaining = sum(AFDMRemaining)) 
-#%>%
- # mutate(AFDMRemaining = 0)
-  
+  group_by(grp = cumsum(Day == 2)) %>% 
+  complete(Day =  c(0, unique(Day)), fill = list(AFDMRemaining = 0.98)) %>%
+  fill(Replicate, Treatment , .direction = 'updown')
 test
 
- bind_rows(remaing,) 
+
 
 # Slope -------------------------------------------------------------------
 
   library(broom)
   
-  remaing
+test
 
-  fitted_models = remaing  %>% group_by(Treatment, Replicate) %>% do(model = lm(log(AFDMRemaining) ~ Day, data = .))
+  fitted_models = test  %>% group_by(Treatment, Replicate) %>% do(model = lm(log(AFDMRemaining) ~ Day, data = .))
   fitted_models$model 
   fitted_models %>% tidy(model)
   fitted_models %>% glance(model)
