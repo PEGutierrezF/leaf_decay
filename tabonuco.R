@@ -115,11 +115,13 @@ remaing
 
 test <- remaing %>%
   group_by(grp = cumsum(Day == 2)) %>% 
-  complete(Day =  c(0, unique(Day)), fill = list(AFDMRemaining = 0.98)) %>%
+  complete(Day =  c(0, unique(Day)), fill = list(AFDMRemaining = 98)) %>%
   fill(Replicate, Treatment , .direction = 'updown')
-test
+Remaing <- as.data.frame(test)
+Remaing
 
-
+AFDM <- log(Remaing$AFDMRemaining)
+Remaing
 
 # Slope -------------------------------------------------------------------
 
