@@ -128,17 +128,16 @@ Remaing
 # Slope -------------------------------------------------------------------
 
   fitted_models <- Remaing  %>% group_by(Treatment, Replicate) %>% 
-                   do(model = lm(AFDM1 ~ Day, data = .))
+  do(model = lm(AFDM1 ~ Day, data = .)) 
+fitted_models
 
   fitted_models$model 
-  
-  
   fitted_models %>% tidy(model)
   fitted_models %>% glance(model)
   fitted_models %>% augment(model)
 
   
-
+  fitted_models%>% summary(model)
 
 
 
