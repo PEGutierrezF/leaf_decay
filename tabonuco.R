@@ -15,6 +15,7 @@ library(dplyr)
 library(plyr)
 library(tidyverse) 
 library(lme4)
+library(broom)
 
 leafdecay <- read.csv("LeafLitterDecomp.csv")
 leafdecay
@@ -116,20 +117,17 @@ remaing
 test <- remaing %>%
   group_by(grp = cumsum(Day == 2)) %>% 
   complete(Day =  c(0, unique(Day)), fill = list(AFDMRemaining = 98)) %>%
-  fill(Replicate, Treatment , .direction = 'updown')
+  fill(Replicate, Treatment , .direction = 'updown')%>%
+  mutate_(AFDM1 = lazyeval::interp(~log(a), a= as.name("AFDMRemaining")))
+
 Remaing <- as.data.frame(test)
 Remaing
 
-AFDM <- log(Remaing$AFDMRemaining)
-Remaing
+
 
 # Slope -------------------------------------------------------------------
 
-  library(broom)
-  
-test
-
-  fitted_models = test  %>% group_by(Treatment, Replicate) %>% do(model = lm(log(AFDMRemaining) ~ Day, data = .))
+    fitted_models = Remaing  %>% group_by(Treatment, Replicate) %>% do(model = lm(AFDM1 ~ Day, data = .))
   fitted_models$model 
   fitted_models %>% tidy(model)
   fitted_models %>% glance(model)
