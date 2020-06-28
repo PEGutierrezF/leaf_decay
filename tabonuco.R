@@ -137,7 +137,16 @@ fitted_models
   fitted_models %>% augment(model)
 
   
-  fitted_models%>% summary(model)
+  
 
  # https://drsimonj.svbtle.com/running-a-model-on-separate-groups
 
+  
+  ggplot(Remaing, aes(x = Day, y = AFDM1,  colour = Replicate )) +
+    geom_point() +
+    geom_smooth(method = "lm", se = FALSE) +
+    facet_wrap(~Treatment + Replicate ) 
+  
+  
+  
+  
