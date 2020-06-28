@@ -141,12 +141,31 @@ fitted_models
 
  # https://drsimonj.svbtle.com/running-a-model-on-separate-groups
 
+
+  ggplot(aes(x = Day, y = AFDM1), data = Remaing) +
+    geom_point() +
+    geom_smooth(aes(colour = Treatment), method = "lm", se = FALSE)
   
-  ggplot(Remaing, aes(x = Day, y = AFDM1,  colour = Replicate )) +
+  
+  ggplot(aes(x = Day, y = AFDM1, colour = Replicate), data = Remaing) +
     geom_point() +
     geom_smooth(method = "lm", se = FALSE) +
-    facet_wrap(~Treatment + Replicate ) 
+    # Splitting the single figure into multiple depending on treatment
+    facet_wrap(~ Treatment + Replicate)
   
+  
+  ggplot(aes(x = Day, y = AFDM1, colour = Treatment), data = Remaing) +
+    geom_point() +
+    geom_smooth(method = "lm", se = FALSE) +
+    # Splitting the single figure into multiple depending on treatment
+    facet_wrap(~ Replicate)
+  
+  
+  ggplot(aes(x = Day, y = AFDM1, colour = factor(Replicate)), data = Remaing) +
+    geom_point() +
+    geom_smooth(method = "lm", se = FALSE) +
+    # Splitting the single figure into multiple depending on treatment
+    facet_wrap(~ Treatment)
   
   
   
