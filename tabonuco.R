@@ -82,15 +82,15 @@ AFDM <- function(data,
 
 # Calculate LN 
     
-    Remaing<- AFDM2 %>%
+    Remaining<- AFDM2 %>%
       group_by(grp = cumsum(Day == 2)) %>% 
       complete(Day =  c(0, unique(Day)), fill = list(AFDMRemaining = meanControl * 100))%>%
       fill(Replicate, Treatment , .direction = 'updown')%>%
       mutate_(Ln_AFDM = lazyeval::interp(~log(a), a= as.name("AFDMRemaining")))
     
-    Remaing <- as.data.frame(Remaing)
+    Remaining <- as.data.frame(Remaining)
     
-    return(Remaing)
+    return(Remaining)
 }
 
 AFDM()
@@ -119,7 +119,7 @@ slope <- function(data,
   
 # Plots -------------------------------------------------------------------
 
-by_trearment <- function(data)
+by_treatment <- function(data)
   {
   ggplot(data, aes(x = Day, y = Ln_AFDM)) +
     geom_point() +

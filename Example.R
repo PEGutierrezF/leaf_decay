@@ -27,7 +27,7 @@ control
 # Percentage of AFDM Remaining ---------------------------------------------
 
 leafdecay
-remaing <- AFDM(data=leafdecay,
+RioPiedras <- AFDM(data=leafdecay,
                 InitDryW= "Initial_Dry_Weight",
                 FinalDryW = "Final_Dry_Weight",
                 FractIntW ="Fraction_Initial_Weight",
@@ -35,7 +35,7 @@ remaing <- AFDM(data=leafdecay,
                 Treatment ="Treatment",
                 Day= "Day",
                 Replicate="Replicate")
-remaing
+RioPiedras
 
 
 
@@ -46,12 +46,12 @@ Slope <- slope (data=remaing,
                  Replicate=Replicate,
                  Day=Day,
                  Ln_AFDM=Ln_AFDM)
-
+Slope
 
 # Plots -------------------------------------------------------------------
 
-  by_trearment(remaing)
-  by_replicate(remaing)  
-  Replicate(remaing)
-  Treatment(remaing)
+  by_treatment(RioPiedras)
+  by_replicate(RioPiedras)  
+  Replicate(RioPiedras)
+  Treatment(RioPiedras)
 
