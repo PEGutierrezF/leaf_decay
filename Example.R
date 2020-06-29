@@ -51,6 +51,6 @@ Slope <- slope (data=remaing,
 # Plots -------------------------------------------------------------------
 
   by_trearment(data=remaing)
-  by_replicate(data=remaing, Day=Day, Ln_AFDM=Ln_AFDM, Replicate = Replicate)
+  
 
 
