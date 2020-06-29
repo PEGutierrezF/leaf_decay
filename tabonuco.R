@@ -119,19 +119,21 @@ slope <- function(data,
   
 # Plots -------------------------------------------------------------------
 
-  ggplot(aes(x = Day, y = Ln_AFDM), data = Remaing) +
+by_trearment <- function(data)
+  {
+  ggplot(data, aes(x = Day, y = Ln_AFDM)) +
     geom_point() +
-    geom_smooth(aes(colour = Treatment), method = "lm", se = FALSE)
+    geom_smooth(aes(colour=Treatment ), method = "lm", se = FALSE)
+    }
   
   
-  ggplot(aes(x = Day, y = Ln_AFDM, colour = Replicate), data = Remaing) +
+  ggplot(aes(x = Day, y = Ln_AFDM, colour = Replicate), data = remaing) +
     geom_point() +
     geom_smooth(method = "lm", se = FALSE) +
-    # Splitting the single figure into multiple depending on treatment
     facet_wrap(~ Treatment + Replicate)
   
   
-  ggplot(aes(x = Day, y = Ln_AFDM, colour = Treatment), data = Remaing) +
+  ggplot(aes(x = Day, y = Ln_AFDM, colour = Treatment), data = emaing) +
     geom_point() +
     geom_smooth(method = "lm", se = FALSE) +
     # Splitting the single figure into multiple depending on treatment
