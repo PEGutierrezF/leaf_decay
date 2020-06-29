@@ -101,7 +101,7 @@ AFDM()
 # Example AFDM Classen-R 2019 ---------------------------------------------
 
 leafdecay
-remaing <- AFDM (data=leafdecay,
+remaing <- AFDM(data=leafdecay,
               InitDryW= "Initial_Dry_Weight",
               FinalDryW = "Final_Dry_Weight",
               FractIntW ="Fraction_Initial_Weight",
@@ -118,7 +118,7 @@ test <- remaing %>%
   group_by(grp = cumsum(Day == 2)) %>% 
   complete(Day =  c(0, unique(Day)), fill = list(AFDMRemaining = 98))%>%
   fill(Replicate, Treatment , .direction = 'updown')%>%
-  mutate_(AFDM1 = lazyeval::interp(~log(a), a= as.name("AFDMRemaining")))
+  mutate_(Ln_AFDM = lazyeval::interp(~log(a), a= as.name("AFDMRemaining")))
 
 Remaing <- as.data.frame(test)
 Remaing
@@ -128,8 +128,7 @@ Remaing
 # Slope -------------------------------------------------------------------
 
   fitted_models <- Remaing  %>% group_by(Treatment, Replicate) %>% 
-  do(model = lm(AFDM1 ~ Day, data = .)) 
-fitted_models
+  do(model = lm(Ln_AFDM ~ Day, data = .)) 
 
   fitted_models$model 
   fitted_models %>% tidy(model)
@@ -142,26 +141,26 @@ fitted_models
  # https://drsimonj.svbtle.com/running-a-model-on-separate-groups
 
 
-  ggplot(aes(x = Day, y = AFDM1), data = Remaing) +
+  ggplot(aes(x = Day, y = Ln_AFDM), data = Remaing) +
     geom_point() +
     geom_smooth(aes(colour = Treatment), method = "lm", se = FALSE)
   
   
-  ggplot(aes(x = Day, y = AFDM1, colour = Replicate), data = Remaing) +
+  ggplot(aes(x = Day, y = Ln_AFDM, colour = Replicate), data = Remaing) +
     geom_point() +
     geom_smooth(method = "lm", se = FALSE) +
     # Splitting the single figure into multiple depending on treatment
     facet_wrap(~ Treatment + Replicate)
   
   
-  ggplot(aes(x = Day, y = AFDM1, colour = Treatment), data = Remaing) +
+  ggplot(aes(x = Day, y = Ln_AFDM, colour = Treatment), data = Remaing) +
     geom_point() +
     geom_smooth(method = "lm", se = FALSE) +
     # Splitting the single figure into multiple depending on treatment
     facet_wrap(~ Replicate)
   
   
-  ggplot(aes(x = Day, y = AFDM1, colour = factor(Replicate)), data = Remaing) +
+  ggplot(aes(x = Day, y = Ln_AFDM, colour = factor(Replicate)), data = Remaing) +
     geom_point() +
     geom_smooth(method = "lm", se = FALSE) +
     # Splitting the single figure into multiple depending on treatment
