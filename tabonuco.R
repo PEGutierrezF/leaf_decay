@@ -131,11 +131,10 @@ Remaing
   do(model = lm(Ln_AFDM ~ Day, data = .)) 
 
   fitted_models$model 
-  fitted_models %>% tidy(model)
-  fitted_models %>% glance(model)
-  fitted_models %>% augment(model)
+  fitted_models %>% tidy(model) %>% print(n = Inf) # Calculate the slope and estimate
+  fitted_models %>% glance(model) %>% print(n = Inf)
+  fitted_models %>% augment(model) %>% print(n = Inf)
 
-  
   
 
  # https://drsimonj.svbtle.com/running-a-model-on-separate-groups
