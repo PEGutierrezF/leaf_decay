@@ -50,7 +50,8 @@ Slope <- slope (data=remaing,
 
 # Plots -------------------------------------------------------------------
 
-  by_trearment(data=remaing)
-  
-
+  by_trearment(remaing)
+  by_replicate(remaing)  
+  Replicate(remaing)
+  Treatment(remaing)
 

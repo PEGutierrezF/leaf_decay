@@ -127,24 +127,32 @@ by_trearment <- function(data)
     }
   
   
-  ggplot(aes(x = Day, y = Ln_AFDM, colour = Replicate), data = remaing) +
+by_replicate <- function(data)
+  { 
+  ggplot(data, (aes(x = Day, y = Ln_AFDM, colour = Replicate))) +
     geom_point() +
     geom_smooth(method = "lm", se = FALSE) +
     facet_wrap(~ Treatment + Replicate)
+  }
   
-  
-  ggplot(aes(x = Day, y = Ln_AFDM, colour = Treatment), data = emaing) +
+
+Replicate <- function(data)
+  {
+  ggplot(data,(aes(x = Day, y = Ln_AFDM, colour = Treatment))) +
     geom_point() +
     geom_smooth(method = "lm", se = FALSE) +
     # Splitting the single figure into multiple depending on treatment
     facet_wrap(~ Replicate)
+  }
   
-  
-  ggplot(aes(x = Day, y = Ln_AFDM, colour = factor(Replicate)), data = Remaing) +
+
+Treatment <- function(data)
+  {
+  ggplot(data,(aes(x = Day, y = Ln_AFDM, colour = factor(Replicate)))) +
     geom_point() +
     geom_smooth(method = "lm", se = FALSE) +
     # Splitting the single figure into multiple depending on treatment
     facet_wrap(~ Treatment)
-  
+  }
   
   
