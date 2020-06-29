@@ -17,10 +17,6 @@ library(tidyverse)
 library(lme4)
 library(broom)
 
-leafdecay <- read.csv("LeafLitterDecomp.csv")
-leafdecay
-
-
 # Controlling by manipulation ----------------------------------------------
 
 manipulation <- function(data,
@@ -40,14 +36,7 @@ manipulation <- function(data,
 manipulation()
 
 
-# Example Clasen-Rodriguez et al. 2019 -----------------------------------
 
-leafdecay
-control <- manipulation(data= leafdecay,
-                     InitDryW = "Initial_Dry_Weight",
-                     FinalDryW = "Final_Dry_Weight",
-                     Treatment = "Treatment")
-control
 
 # Percentage of AFDM Remaining --------------------------------------------
 
@@ -90,54 +79,45 @@ AFDM <- function(data,
 
     AFDM1 <- select_(.,Day, Replicate, Treatment, "AFDMRemaining")
     AFDM2 <- arrange(AFDM1, Treatment, Replicate)
+
+# Calculate LN 
     
-    return(AFDM2)
+    Remaing<- AFDM2 %>%
+      group_by(grp = cumsum(Day == 2)) %>% 
+      complete(Day =  c(0, unique(Day)), fill = list(AFDMRemaining = meanControl * 100))%>%
+      fill(Replicate, Treatment , .direction = 'updown')%>%
+      mutate_(Ln_AFDM = lazyeval::interp(~log(a), a= as.name("AFDMRemaining")))
+    
+    Remaing <- as.data.frame(Remaing)
+    
+    return(Remaing)
 }
 
 AFDM()
 
 
 
-# Example AFDM Classen-R 2019 ---------------------------------------------
-
-leafdecay
-remaing <- AFDM(data=leafdecay,
-              InitDryW= "Initial_Dry_Weight",
-              FinalDryW = "Final_Dry_Weight",
-              FractIntW ="Fraction_Initial_Weight",
-              FractFinW = "Fraction_Final_Weight",
-              Treatment ="Treatment",
-              Day= "Day",
-              Replicate="Replicate")
-remaing
-
-
-# Adding Replicate 0 to dataframe -----------------------------------------
-
-test <- remaing %>%
-  group_by(grp = cumsum(Day == 2)) %>% 
-  complete(Day =  c(0, unique(Day)), fill = list(AFDMRemaining = 98))%>%
-  fill(Replicate, Treatment , .direction = 'updown')%>%
-  mutate_(Ln_AFDM = lazyeval::interp(~log(a), a= as.name("AFDMRemaining")))
-
-Remaing <- as.data.frame(test)
-Remaing
-
-
 # Slope -------------------------------------------------------------------
 
-  fitted_models <- Remaing  %>% group_by(Treatment, Replicate) %>% 
+slope <- function(data,
+                  Treatment, 
+                  Replicate,
+                  Day,
+                  Ln_AFDM){
+  fitted_models <- data  %>% group_by(Treatment, Replicate) %>% 
   do(model = lm(Ln_AFDM ~ Day, data = .)) 
 
   fitted_models$model 
-  fitted_models %>% tidy(model) %>% print(n = Inf) # Calculate the slope and estimate
-  fitted_models %>% glance(model) %>% print(n = Inf) # Calculate the r-squared and p-value
-  fitted_models %>% augment(model) %>% print(n = Inf) # 
+  slope <- fitted_models %>% tidy(model) %>% print(n = Inf) # Calculate the slope and estimate
+  r_squared <- fitted_models %>% glance(model) %>% print(n = Inf) # Calculate the r-squared and p-value
+ # fitted_models %>% augment(model) %>% print(n = Inf) 
+  
+  return(slope)
+  return(r_squared)
+}
 
   
-
- # https://drsimonj.svbtle.com/running-a-model-on-separate-groups
-
+# Plots -------------------------------------------------------------------
 
   ggplot(aes(x = Day, y = Ln_AFDM), data = Remaing) +
     geom_point() +

@@ -40,3 +40,16 @@ control_manipulation <- function(data,
 control_manipulation()
 
 
+
+
+# Adding Replicate 0 to dataframe -----------------------------------------
+
+test <- remaing %>%
+  group_by(grp = cumsum(Day == 2)) %>% 
+  complete(Day =  c(0, unique(Day)), fill = list(AFDMRemaining = 98))%>%
+  fill(Replicate, Treatment , .direction = 'updown')%>%
+  mutate_(Ln_AFDM = lazyeval::interp(~log(a), a= as.name("AFDMRemaining")))
+
+Remaing <- as.data.frame(test)
+Remaing
+
