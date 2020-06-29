@@ -124,7 +124,6 @@ Remaing <- as.data.frame(test)
 Remaing
 
 
-
 # Slope -------------------------------------------------------------------
 
   fitted_models <- Remaing  %>% group_by(Treatment, Replicate) %>% 
