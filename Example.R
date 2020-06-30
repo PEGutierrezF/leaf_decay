@@ -41,7 +41,7 @@ RioPiedras
 
 # # Slope and r_squared  --------------------------------------------------
 
-Slope <- slope (data=remaing,
+Slope <- slope (data=RioPiedras,
                  Treatment=Treatment, 
                  Replicate=Replicate,
                  Day=Day,
@@ -54,4 +54,5 @@ Slope
   by_replicate(RioPiedras)  
   Replicate(RioPiedras)
   Treatment(RioPiedras)
+  by_error(RioPiedras)
 
