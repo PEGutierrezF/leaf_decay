@@ -164,17 +164,19 @@ Treatment <- function(data)
   by_error <- function(data)
     {
       data%>% # the names of the new data frame and the data frame to be summarised
-      group_by(Treatment,Day) %>%   # the grouping variable
+      group_by(Treatment, Day) %>%   # the grouping variable
       dplyr::summarise(mean = mean(AFDMRemaining),  # calculates the mean of each group
             sd = sd(AFDMRemaining), # calculates the standard deviation of each group
             n = n(),  # calculates the sample size per group
             SE = sd(AFDMRemaining)/sqrt(n()) # calculates the standard error of each group
             ) %>% 
-      ggplot(aes(x = Day , y= mean, group = Treatment))+
-      geom_line()+ geom_point()  +
-      geom_errorbar(aes(ymax=mean+SE, ymin=mean-SE), width=0.25) + 
+      ggplot(aes(x = Day , y= mean, group = Treatment,color=Treatment))+
+      geom_line(size=1)+ geom_point(size=2)  +
+  #    geom_smooth(method = "lm", se=FALSE, color="blue", formula = y ~ x)+
+      geom_errorbar(aes(ymax=mean+SE, ymin=mean-SE), width=0.5) + 
       xlab('Day') + ylab('AFDM remaining') +
     facet_wrap(~ Treatment)
   }
+
 
 
