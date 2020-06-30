@@ -116,7 +116,8 @@ slope <- function(data,
   return(r_squared)
 }
 
-  
+ 
+ 
 # Plots -------------------------------------------------------------------
 
 by_treatment <- function(data)
@@ -126,7 +127,8 @@ by_treatment <- function(data)
     geom_smooth(aes(colour=Treatment ), method = "lm", se = FALSE)
     }
   
-  
+ 
+ 
 by_replicate <- function(data)
   { 
   ggplot(data, (aes(x = Day, y = Ln_AFDM, colour = Replicate))) +
@@ -135,6 +137,7 @@ by_replicate <- function(data)
     facet_wrap(~ Treatment + Replicate)
   }
   
+
 
 Replicate <- function(data)
   {
@@ -146,6 +149,7 @@ Replicate <- function(data)
   }
   
 
+
 Treatment <- function(data)
   {
   ggplot(data,(aes(x = Day, y = Ln_AFDM, colour = factor(Replicate)))) +
@@ -156,20 +160,21 @@ Treatment <- function(data)
   }
 
 
+
   by_error <- function(data)
     {
       data%>% # the names of the new data frame and the data frame to be summarised
       group_by(Treatment,Day) %>%   # the grouping variable
-      dplyr::summarise(mean_PL = mean(Ln_AFDM),  # calculates the mean of each group
-            sd_PL = sd(Ln_AFDM), # calculates the standard deviation of each group
-            n_PL = n(),  # calculates the sample size per group
-            SE_PL = sd(Ln_AFDM)/sqrt(n())
-            ) %>% # calculates the standard error of each group
-      ggplot(aes(x = Day , y= mean_PL, group = Treatment))+
+      dplyr::summarise(mean = mean(AFDMRemaining),  # calculates the mean of each group
+            sd = sd(AFDMRemaining), # calculates the standard deviation of each group
+            n = n(),  # calculates the sample size per group
+            SE = sd(AFDMRemaining)/sqrt(n()) # calculates the standard error of each group
+            ) %>% 
+      ggplot(aes(x = Day , y= mean, group = Treatment))+
       geom_line()+ geom_point()  +
-      geom_errorbar(aes(ymax=mean_PL+SE_PL, ymin=mean_PL-SE_PL), width=0.25) + 
+      geom_errorbar(aes(ymax=mean+SE, ymin=mean-SE), width=0.25) + 
       xlab('Day') + ylab('AFDM remaining') +
     facet_wrap(~ Treatment)
   }
-  by_error(RioPiedras)
+
 
