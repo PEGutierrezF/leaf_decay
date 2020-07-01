@@ -26,7 +26,7 @@ manipulation <- function(data,
                          Difference) {
   control <- data %>% 
     filter(Treatment == "Control") %>%
-    select_(InitDryW,FinalDryW) %>%
+    select(InitDryW,FinalDryW) %>%
     mutate_(Difference = lazyeval::interp (~a/b,  a=as.name(FinalDryW),b=as.name(InitDryW)))
 
   meanControl <- mean(control$Difference, na.rm = TRUE)
@@ -34,8 +34,6 @@ manipulation <- function(data,
 }
 
 manipulation()
-
-
 
 
 # Percentage of AFDM Remaining --------------------------------------------
