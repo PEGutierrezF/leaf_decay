@@ -48,11 +48,12 @@ Slope <- slope(data=RioPiedras,
                  Ln_AFDM=Ln_AFDM)
 Slope
 
-# Plots -------------------------------------------------------------------
+ # Plots -------------------------------------------------------------------
 
   by_treatment(RioPiedras)
   by_replicate(RioPiedras)  
   Replicate(RioPiedras)
   Treatment(RioPiedras)
   by_error(RioPiedras)
+  by_errorBar(RioPiedras)
 

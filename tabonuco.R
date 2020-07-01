@@ -108,11 +108,11 @@ slope <- function(data,
   do(model = lm(Ln_AFDM ~ Day, data = .)) 
 
   fitted_models$model 
-  slope <- fitted_models %>% tidy(model) %>% print(n = Inf) # Calculate the slope and estimate
+  Slope <- fitted_models %>% tidy(model) %>% print(n = Inf) # Calculate the slope and estimate
   r_squared <- fitted_models %>% glance(model) %>% print(n = Inf) # Calculate the r-squared and p-value
  # fitted_models %>% augment(model) %>% print(n = Inf) 
   
-  return(slope)
+  return(Slope)
   return(r_squared)
 }
 
@@ -178,5 +178,21 @@ Treatment <- function(data)
     facet_wrap(~ Treatment)
   }
 
+  
+  by_errorBar <- function(data)
+  {
+    data%>% # the names of the new data frame and the data frame to be summarised
+      group_by(Treatment) %>%   # the grouping variable
+      dplyr::summarise(mean = mean(AFDMRemaining),  # calculates the mean of each group
+                       sd = sd(AFDMRemaining), # calculates the standard deviation of each group
+                       n = n(),  # calculates the sample size per group
+                       SE = sd(AFDMRemaining)/sqrt(n()) # calculates the standard error of each group
+      ) %>% 
+      ggplot(aes(x = Treatment , y= mean))+
+      geom_bar(stat="identity",  position=position_dodge()) +
+      #    geom_smooth(method = "lm", se=FALSE, color="blue", formula = y ~ x)+
+      geom_errorbar(aes(ymax=mean+SE, ymin=mean-SE), width=0.5, position=position_dodge(.9)) + 
+      xlab('Treatment') + ylab('AFDM remaining') 
+  }
 
 
