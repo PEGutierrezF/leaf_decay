@@ -28,7 +28,7 @@ manipulation <- function(data,
     filter(Treatment == "Control") %>%
     select(InitDryW,FinalDryW) %>%
     mutate_(Difference = lazyeval::interp (~a/b,  a=as.name(FinalDryW),b=as.name(InitDryW)))
-
+  
   meanControl <- mean(control$Difference, na.rm = TRUE)
   return (meanControl)
 }
