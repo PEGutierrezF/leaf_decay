@@ -11,7 +11,6 @@ control <- data.frame(Day=c(0,0,0,0,0,0),
                   FinalFraction=c(0.3858,0.3504,0.4248,0.3333,0.3417,0.3467),
                   Treatment=c("Control","Control","Control","Control","Control","Control"))
 control
-
 sites <-data.frame(Day=c(2,4,8,16,32,44),
                    Replica=c(1,1,1,1,1,1,2,2,2,2,2,2,3,3,3,3,3,3),
                    Initial_Dry_Weight=c(5.000,5.000,5.000,5.000,5.01,5.000,5.000,5.000,
@@ -24,9 +23,7 @@ sites <-data.frame(Day=c(2,4,8,16,32,44),
                 0.3345,0.3595,0.3511,0.3921,0.3908,0.3385,0.347,0.3366,0.3318),
                 Treatment=c("CC","CC","CC","CC","CC","CC","CC","CC","CC","CC","CC","CC","CC",
                     "CC","CC","CC","CC","CC"))
-
 sites
-
 total <- dplyr::bind_rows(control,sites)
 total
 
