@@ -26,7 +26,7 @@ manipulation <- function(data,InitDryW,FinalDryW,Treatment) {
     dplyr::mutate(Difference = {{FinalDryW}}/{{InitDryW}})
   
    . <- mean(control$Difference, na.rm = TRUE)
-   meanControl<- .*100
+   meanControl <- .*100
   return (meanControl)
 }
 
