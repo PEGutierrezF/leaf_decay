@@ -21,11 +21,12 @@ library(broom)
 
 manipulation <- function(data,InitDryW,FinalDryW,Treatment) {
   control <- data %>% 
-    filter(Treatment == "Control") %>%
-    select({{InitDryW}},{{FinalDryW}}) %>%
-    mutate(Difference = {{FinalDryW}}/{{InitDryW}})
+    dplyr::filter(Treatment == "Control") %>%
+    dplyr::select({{InitDryW}},{{FinalDryW}}) %>%
+    dplyr::mutate(Difference = {{FinalDryW}}/{{InitDryW}})
   
-  meanControl <- mean(control$Difference, na.rm = TRUE)
+   . <- mean(control$Difference, na.rm = TRUE)
+   meanControl<- .*100
   return (meanControl)
 }
 
