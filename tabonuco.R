@@ -37,57 +37,52 @@ manipulation <- function(data,InitDryW,FinalDryW,Treatment) {
 # AFDMFraction = Amount of AFDM in a subsample
 
 AFDM <- function(data,
-                    InitDryW,
-                    FinalDryW,
-                    FractIntW,
-                    FractFinW,
-                    Treatment,
-                    Day,
-                    Replicate,
-                    Difference,
-                    control) {
-  
-# Calculate the control by manupulation
+                 InitDryW,
+                 FinalDryW,
+                 FractIntW,
+                 FractFinW,
+                 Treatment,
+                 Day,
+                 Replicate,
+                 Difference,
+                 control) {
+  # Calculate the control by manupulation
   control <- data %>% 
-    filter(Treatment == "Control") %>%
-    select_(InitDryW,FinalDryW) %>%
-    mutate_(Difference = lazyeval::interp (~a/b,  a=as.name(FinalDryW),b=as.name(InitDryW)))
-  
+    dplyr::filter(Treatment == "Control") %>%
+    dplyr::select({{InitDryW}},{{FinalDryW}}) %>%
+    dplyr::mutate(Difference = {{FinalDryW}}/{{InitDryW}})
   meanControl <- mean(control$Difference, na.rm = TRUE)
-
-# Corrects the initial dry mass by manipulation
+  
+  # Corrects the initial dry mass by manipulation
   . <- data %>%
-    filter(Treatment != "Control") %>%
-    mutate_(IDWc = lazyeval::interp (~a*b, a=as.name(InitDryW), b=as.name("meanControl"))) %>% # Corrects dry mass (laboratory) for mass lost from handling
-
-# Calculate the AFDM in the subsample
-    mutate_(AFDMFraction = lazyeval::interp (~(a-b)/a, a= as.name (FractIntW), b= as.name (FractFinW))) %>%   # AFDM in the subsample
-
-# Calculate the AFDM in the corrected initial mass and in the final mass   
-      mutate_(AFDM_Initial = lazyeval::interp (~a*b, a= as.name("IDWc"), b= as.name("AFDMFraction"))) %>% # AFDM in the initial sample
-      mutate_(AFDM_Final = lazyeval::interp (~a*b, a= as.name(FinalDryW), b= as.name("AFDMFraction"))) %>%   #AFDM in the Final sample         
-
-# Calculate the percentage of remaining mass
-      mutate_(AFDMRemaining = lazyeval::interp (~a/b*100, a= as.name("AFDM_Final"), b= as.name("AFDM_Initial")))    # % AFDM Remaining
-
-    AFDM1 <- select_(.,Day, Replicate, Treatment, "AFDMRemaining")
-    AFDM2 <- arrange(AFDM1, Treatment, Replicate)
-
-# Calculate LN 
+    dplyr::filter(Treatment != "Control") %>%
+    dplyr::mutate(IDWc = {{InitDryW}} * meanControl) %>%  # Corrects dry mass (laboratory) for mass lost from handling
     
-    Remaining<- AFDM2 %>%
-      group_by(grp = cumsum(Day == 2)) %>% 
-      complete(Day =  c(0, unique(Day)), fill = list(AFDMRemaining = meanControl * 100))%>%
-      fill(Replicate, Treatment , .direction = 'updown')%>%
-      mutate_(Ln_AFDM = lazyeval::interp(~log(a), a= as.name("AFDMRemaining")))
+    # Calculate the AFDM in the subsample
+    dplyr::mutate(AFDMFraction = ({{FractIntW}} - {{FractFinW}}) / {{FractIntW}}) %>%   # AFDM in the subsample
     
-    Remaining <- as.data.frame(Remaining)
+    # Calculate the AFDM in the corrected initial mass and in the final mass   
+    dplyr::mutate(AFDM_Initial = IDWc * AFDMFraction) %>% # AFDM in the initial sample
+    dplyr::mutate(AFDM_Final = {{FinalDryW}} * AFDMFraction) %>%  #AFDM in the Final sample 
     
-    return(Remaining)
+    # Calculate the percentage of remaining mass
+    dplyr::mutate(AFDMRemaining = (AFDM_Final/AFDM_Initial) * 100)     # % AFDM Remaining
+  
+  AFDM1 <- dplyr::select(., {{Day}}, {{Replicate}}, {{Treatment}}, AFDMRemaining)
+  AFDM2 <- dplyr::arrange(AFDM1, {{Treatment}}, {{Replicate}})
+  
+  # Calculate LN 
+  
+  Remaining <- AFDM2 %>%
+    group_by(grp = cumsum(Day == 2)) %>% 
+    complete(Day =  c(0, unique(Day)), fill = list(AFDMRemaining = meanControl * 100))%>%
+    fill(Replicate, Treatment , .direction = 'updown')%>%
+    dplyr::mutate(Ln_AFDM = log(AFDMRemaining))
+  
+  Remaining <- as.data.frame(Remaining)
+  
+  return(Remaining)
 }
-
-AFDM()
-
 
 
 # Slope -------------------------------------------------------------------
