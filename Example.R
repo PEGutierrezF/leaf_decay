@@ -17,8 +17,7 @@ head(leafdecay)
 
 # Control by manipulation -------------------------------------------------
 
-
-control <- manipulation(data = leafdecay,
+control <- manipulation(data= leafdecay,
                         InitDryW = Initial_Dry_Weight,
                         FinalDryW = Final_Dry_Weight,
                         Treatment = Control)

@@ -13,6 +13,40 @@ AFDM <- function(data,
                  Replicate,
                  Difference,
                  control) {
+    
+# Calculate the control by manupulation
+    manipulation <- function(data,InitDryW,FinalDryW,Treatment) {
+      control <- data %>% 
+        dplyr::filter(Treatment == "Control") %>%
+        dplyr::select({{InitDryW}},{{FinalDryW}}) %>%
+        dplyr::mutate(Difference = {{FinalDryW}}/{{InitDryW}})
+      
+      . <- mean(control$Difference, na.rm = TRUE)
+      meanControl <- .*100
+  
+# Corrects the initial dry mass by manipulation
+  . <- data %>%
+    dplyr::filter(Treatment != "Control") %>%
+    dplyr::mutate(IDWc = {{InitDryW}} * "meanControl") %>% # Corrects dry mass (laboratory) for mass lost from handling
+  
+    return(AFDM)
+}
+  
+
+remaing <- AFDM(data= leafdecay,
+                InitDryW= Initial_Dry_Weight,
+                FinalDryW = Final_Dry_Weight,
+                FractIntW =Fraction_Initial_Weight,
+                FractFinW = Fraction_Final_Weight,
+                Treatment =Treatment,
+                Day = Day,
+                Replicate= Replicate)
+
+remaing
+
+
+
+  
 
     control <- data %>% 
       filter(Treatment == "Control") %>%
@@ -47,6 +81,9 @@ remaing <- AFDM(data=leafdecay,
                  Replicate="Replicate")
 
 remaing
+
+
+
 
 df <- data.frame(a=c(1,1,1,2,2), b=1:5)
 df
