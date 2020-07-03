@@ -13,14 +13,15 @@
 
 leafdecay <- read.csv("LeafLitterDecomp.csv")
 leafdecay
+head(leafdecay)
 
 # Control by manipulation -------------------------------------------------
 
-leafdecay
+
 control <- manipulation(data= leafdecay,
-                        InitDryW = "Initial_Dry_Weight",
-                        FinalDryW = "Final_Dry_Weight",
-                        Treatment = "Treatment")
+                        InitDryW = Initial_Dry_Weight,
+                        FinalDryW = Final_Dry_Weight,
+                        Treatment = Control)
 control
 
 

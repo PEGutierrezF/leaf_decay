@@ -27,27 +27,25 @@ sites
 total <- dplyr::bind_rows(control,sites)
 total
 
+library(dplyr)
+library(rlang)
 
-manipulation <- function(data,
-                         InitDryW,
-                         FinalDryW,
-                         Treatment,
-                         Difference) {
+manipulation <- function(data,InitDryW,FinalDryW,Treatment) {
   control <- data %>% 
     filter(Treatment == "Control") %>%
-    select(InitDryW,FinalDryW) %>%
-    mutate_(Difference = lazyeval::interp (~a/b,  a=as.name(FinalDryW),b=as.name(InitDryW)))
-    meanControl <- mean(control$Difference, na.rm = TRUE)
-    return (meanControl)
+    select({{InitDryW}},{{FinalDryW}}) %>%
+    mutate(Difference = {{FinalDryW}}/{{InitDryW}})
+  
+  meanControl <- mean(control$Difference, na.rm = TRUE)
+  return (meanControl)
 }
-manipulation()
 
 
-control <- manipulation(data= total,
-                        InitDryW = "Initial_Dry_Weight",
-                        FinalDryW = "Final_Dry_Weight",
-                        Treatment = "Treatment")
-control
+manipulation(data= leafdecay,
+             InitDryW = Initial_Dry_Weight,
+             FinalDryW = Final_Dry_Weight,
+             Treatment = Control)
+
 
 
 # Question 2 --------------------------------------------------------------
