@@ -43,36 +43,33 @@ AFDM <- function(data,
                  FractFinW,
                  Treatment,
                  Day,
-                 Replicate,
-                 Difference,
-                 control) {
-  # Calculate the control by manupulation
+                 Replicate) {
+# Calculate the control by manupulation
   control <- data %>% 
     dplyr::filter(Treatment == "Control") %>%
     dplyr::select({{InitDryW}},{{FinalDryW}}) %>%
     dplyr::mutate(Difference = {{FinalDryW}}/{{InitDryW}})
   meanControl <- mean(control$Difference, na.rm = TRUE)
   
-  # Corrects the initial dry mass by manipulation
+# Corrects the initial dry mass by manipulation
   . <- data %>%
     dplyr::filter(Treatment != "Control") %>%
     dplyr::mutate(IDWc = {{InitDryW}} * meanControl) %>%  # Corrects dry mass (laboratory) for mass lost from handling
     
-    # Calculate the AFDM in the subsample
+# Calculate the AFDM in the subsample
     dplyr::mutate(AFDMFraction = ({{FractIntW}} - {{FractFinW}}) / {{FractIntW}}) %>%   # AFDM in the subsample
     
-    # Calculate the AFDM in the corrected initial mass and in the final mass   
+# Calculate the AFDM in the corrected initial mass and in the final mass   
     dplyr::mutate(AFDM_Initial = IDWc * AFDMFraction) %>% # AFDM in the initial sample
     dplyr::mutate(AFDM_Final = {{FinalDryW}} * AFDMFraction) %>%  #AFDM in the Final sample 
     
-    # Calculate the percentage of remaining mass
+# Calculate the percentage of remaining mass
     dplyr::mutate(AFDMRemaining = (AFDM_Final/AFDM_Initial) * 100)     # % AFDM Remaining
   
   AFDM1 <- dplyr::select(., {{Day}}, {{Replicate}}, {{Treatment}}, AFDMRemaining)
   AFDM2 <- dplyr::arrange(AFDM1, {{Treatment}}, {{Replicate}})
   
   # Calculate LN 
-  
   Remaining <- AFDM2 %>%
     group_by(grp = cumsum(Day == 2)) %>% 
     complete(Day =  c(0, unique(Day)), fill = list(AFDMRemaining = meanControl * 100))%>%
