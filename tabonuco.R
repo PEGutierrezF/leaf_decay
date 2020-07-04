@@ -69,7 +69,7 @@ AFDM <- function(data,
   AFDM1 <- dplyr::select(., {{Day}}, {{Replicate}}, {{Treatment}}, AFDMRemaining)
   AFDM2 <- dplyr::arrange(AFDM1, {{Treatment}}, {{Replicate}})
   
-  # Calculate LN 
+# Calculate LN 
   Remaining <- AFDM2 %>%
     group_by(grp = cumsum(Day == 2)) %>% 
     complete(Day =  c(0, unique(Day)), fill = list(AFDMRemaining = meanControl * 100))%>%
