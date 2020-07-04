@@ -17,8 +17,8 @@ head(leafdecay)
 
 # Control by manipulation -------------------------------------------------
 
-control <- manipulation(data= leafdecay,
-                        InitDryW = Initial_Dry_Weight,
+control <- manipulation(data      = leafdecay,
+                        InitDryW  = Initial_Dry_Weight,
                         FinalDryW = Final_Dry_Weight,
                         Treatment = Control)
 control
@@ -27,26 +27,25 @@ control
 # Percentage of AFDM Remaining ---------------------------------------------
 
 leafdecay
-remaing <- AFDM(data= leafdecay,
-                InitDryW= Initial_Dry_Weight,
-                FinalDryW = Final_Dry_Weight,
-                FractIntW = Fraction_Initial_Weight,
-                FractFinW = Fraction_Final_Weight,
-                Treatment = Treatment,
-                Day = Day,
-                Replicate= Replicate)
+remaing <- AFDM(data      =  leafdecay,
+                InitDryW  =  Initial_Dry_Weight,
+                FinalDryW =  Final_Dry_Weight,
+                FractIntW =  Fraction_Initial_Weight,
+                FractFinW =  Fraction_Final_Weight,
+                Treatment =  Treatment,
+                Day       =  Day,
+                Replicate =  Replicate)
 
 remaing
 
 
 # # Slope and r_squared  --------------------------------------------------
 
-Slope <- slope(data=remaing,
-                 Treatment=Treatment, 
-                 Replicate=Replicate,
-                 Day=Day,
-                 Ln_AFDM=Ln_AFDM)
-
+          slope(data  = remaing,
+               Treatment  = Treatment, 
+               Replicate  = Replicate,
+               Day        = Day,
+               Ln_AFDM    = Ln_AFDM)
 
  # Plots -------------------------------------------------------------------
 

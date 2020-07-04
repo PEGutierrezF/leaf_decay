@@ -92,11 +92,13 @@ slope <- function(data,
   fitted_models <- data  %>% group_by(Treatment, Replicate) %>% 
   do(model = lm(Ln_AFDM ~ Day, data = .)) 
 
-  Slope = tidy(fitted_models, model) %>% print(n = Inf)
-  r_squared = glance(fitted_models, model) %>% print(n = Inf) 
+  broom::tidy(fitted_models,model) %>% print(n = Inf) # Calculate the slope and estimate
+  broom::glance(fitted_models,model) %>% print(n = Inf) # Calculate the r-squared and p-value
   
-  return(Slope)
-  return(r_squared)
+  #Slope <- fitted_models %>% tidy(model) %>% print(n = Inf) # Calculate the slope and estimate
+  #r_squared <- fitted_models %>% glance(model) %>% print(n = Inf) # Calculate the r-squared and p-value
+  #return(Slope)
+  #return(r_squared)
 }
 
  
