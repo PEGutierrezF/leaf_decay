@@ -46,7 +46,7 @@ Slope <- slope(data=remaing,
                  Replicate=Replicate,
                  Day=Day,
                  Ln_AFDM=Ln_AFDM)
-Slope
+
 
  # Plots -------------------------------------------------------------------
 

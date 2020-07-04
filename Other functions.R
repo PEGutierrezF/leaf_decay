@@ -126,3 +126,11 @@ AFDM <- function(data,
 
 AFDM()
 
+
+##################################################################
+
+#  fitted_models$model 
+#  Slope <- fitted_models %>% tidy(model) %>% print(n = Inf) # Calculate the slope and estimate
+# r_squared <- fitted_models %>% glance(model) %>% print(n = Inf) # Calculate the r-squared and p-value
+# fitted_models %>% augment(model) %>% print(n = Inf) 
+
