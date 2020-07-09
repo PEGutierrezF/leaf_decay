@@ -19,11 +19,11 @@ library(broom)
 
 # Controlling by manipulation ----------------------------------------------
 
-manipulation <- function(data,InitDryW,FinalDryW,Treatment) {
+manipulation <- function(data,InitialWt,FinalWt,Treatment) {
   control <- data %>% 
     dplyr::filter(Treatment == "Control") %>%
-    dplyr::select({{InitDryW}},{{FinalDryW}}) %>%
-    dplyr::mutate(Difference = {{FinalDryW}}/{{InitDryW}})
+    dplyr::select({{InitialWt}},{{FinalWt}}) %>%
+    dplyr::mutate(Difference = {{FinalWt}}/{{InitialWt}})
   
    . <- mean(control$Difference, na.rm = TRUE)
    meanControl <- .*100
@@ -37,44 +37,44 @@ manipulation <- function(data,InitDryW,FinalDryW,Treatment) {
 # AFDMFraction = Amount of AFDM in a subsample
 
 AFDM <- function(data,
-                 InitDryW,
-                 FinalDryW,
-                 FractIntW,
-                 FractFinW,
+                 InitialWt,
+                 FinalWt,
+                 Frac.InitialWt,
+                 Frac.FinalWt,
                  Treatment,
                  Day,
                  Replicate) {
 # Calculate the control by manupulation
   control <- data %>% 
     dplyr::filter(Treatment == "Control") %>%
-    dplyr::select({{InitDryW}},{{FinalDryW}}) %>%
-    dplyr::mutate(Difference = {{FinalDryW}}/{{InitDryW}})
+    dplyr::select({{InitialWt}},{{FinalWt}}) %>%
+    dplyr::mutate(Difference = {{FinalWt}}/{{InitialWt}})
   meanControl <- mean(control$Difference, na.rm = TRUE)
   
 # Corrects the initial dry mass by manipulation
   . <- data %>%
     dplyr::filter(Treatment != "Control") %>%
-    dplyr::mutate(IDWc = {{InitDryW}} * meanControl) %>%  # Corrects dry mass (laboratory) for mass lost from handling
+    dplyr::mutate(IDWc = {{InitialWt}} * meanControl) %>%  # Corrects dry mass (laboratory) for mass lost from handling
     
 # Calculate the AFDM in the subsample
-    dplyr::mutate(AFDMFraction = ({{FractIntW}} - {{FractFinW}}) / {{FractIntW}}) %>%   # AFDM in the subsample
+    dplyr::mutate(AFDMFraction = ({{Frac.InitialWt}} - {{Frac.FinalWt}}) / {{Frac.InitialWt}}) %>%   # AFDM in the subsample
     
 # Calculate the AFDM in the corrected initial mass and in the final mass   
     dplyr::mutate(AFDM_Initial = IDWc * AFDMFraction) %>% # AFDM in the initial sample
-    dplyr::mutate(AFDM_Final = {{FinalDryW}} * AFDMFraction) %>%  #AFDM in the Final sample 
+    dplyr::mutate(AFDM_Final = {{FinalWt}} * AFDMFraction) %>%  #AFDM in the Final sample 
     
 # Calculate the percentage of remaining mass
-    dplyr::mutate(AFDMRemaining = (AFDM_Final/AFDM_Initial) * 100)     # % AFDM Remaining
+    dplyr::mutate(AFDMrem = (AFDM_Final/AFDM_Initial) * 100)     # % AFDM Remaining
   
-  AFDM1 <- dplyr::select(., {{Day}}, {{Replicate}}, {{Treatment}}, AFDMRemaining)
+  AFDM1 <- dplyr::select(., {{Day}}, {{Replicate}}, {{Treatment}}, AFDMrem)
   AFDM2 <- dplyr::arrange(AFDM1, {{Treatment}}, {{Replicate}})
   
 # Calculate LN 
   Remaining <- AFDM2 %>%
     group_by(grp = cumsum(Day == 2)) %>% 
-    complete(Day =  c(0, unique(Day)), fill = list(AFDMRemaining = meanControl * 100))%>%
+    complete(Day =  c(0, unique(Day)), fill = list(AFDMrem = meanControl * 100))%>%
     fill(Replicate, Treatment , .direction = 'updown')%>%
-    dplyr::mutate(Ln_AFDM = log(AFDMRemaining))
+    dplyr::mutate(Ln.AFDMrem = log(AFDMrem))
   
   Remaining <- as.data.frame(Remaining)
   
@@ -88,26 +88,36 @@ slope <- function(data,
                   Treatment, 
                   Replicate,
                   Day,
-                  Ln_AFDM){
+                  Ln.AFDMrem){
   fitted_models <- data  %>% group_by(Treatment, Replicate) %>% 
-  do(model = lm(Ln_AFDM ~ Day, data = .)) 
+  do(model = lm(Ln.AFDMrem ~ Day, data = .)) 
 
   broom::tidy(fitted_models,model) %>% print(n = Inf) # Calculate the slope and estimate
-  broom::glance(fitted_models,model) %>% print(n = Inf) # Calculate the r-squared and p-value
-  
-  #Slope <- fitted_models %>% tidy(model) %>% print(n = Inf) # Calculate the slope and estimate
-  #r_squared <- fitted_models %>% glance(model) %>% print(n = Inf) # Calculate the r-squared and p-value
-  #return(Slope)
-  #return(r_squared)
+
 }
 
+
+# rSquared ----------------------------------------------------------------
+
+
+rSquared <- function(data,
+                  Treatment, 
+                  Replicate,
+                  Day,
+                  Ln.AFDMrem){
+  fitted_models <- data  %>% group_by(Treatment, Replicate) %>% 
+    do(model = lm(Ln.AFDMrem ~ Day, data = .)) 
+
+  broom::glance(fitted_models,model) %>% print(n = Inf) # Calculate the r-squared and p-value
+
+}
  
  
 # Plots -------------------------------------------------------------------
 
 by_treatment <- function(data)
   {
-  ggplot(data, aes(x = Day, y = Ln_AFDM)) +
+  ggplot(data, aes(x = Day, y = AFDMrem)) +
     geom_point() +
     geom_smooth(aes(colour=Treatment ), method = "lm", se = FALSE)
     }
@@ -116,7 +126,7 @@ by_treatment <- function(data)
  
 by_replicate <- function(data)
   { 
-  ggplot(data, (aes(x = Day, y = Ln_AFDM, colour = Replicate))) +
+  ggplot(data, (aes(x = Day, y = AFDMrem, colour = Replicate))) +
     geom_point() +
     geom_smooth(method = "lm", se = FALSE) +
     facet_wrap(~ Treatment + Replicate)
@@ -124,9 +134,9 @@ by_replicate <- function(data)
   
 
 
-Replicate <- function(data)
+replicate <- function(data)
   {
-  ggplot(data,(aes(x = Day, y = Ln_AFDM, colour = Treatment))) +
+  ggplot(data,(aes(x = Day, y = AFDMrem, colour = Treatment))) +
     geom_point() +
     geom_smooth(method = "lm", se = FALSE) +
     # Splitting the single figure into multiple depending on treatment
@@ -135,9 +145,9 @@ Replicate <- function(data)
   
 
 
-Treatment <- function(data)
+treatment <- function(data)
   {
-  ggplot(data,(aes(x = Day, y = Ln_AFDM, colour = factor(Replicate)))) +
+  ggplot(data,(aes(x = Day, y = AFDMrem, colour = factor(Replicate)))) +
     geom_point() +
     geom_smooth(method = "lm", se = FALSE) +
     # Splitting the single figure into multiple depending on treatment
@@ -146,14 +156,14 @@ Treatment <- function(data)
 
 
 
-  by_error <- function(data)
+  by_site <- function(data)
     {
       data%>% # the names of the new data frame and the data frame to be summarised
       group_by(Treatment, Day) %>%   # the grouping variable
-      dplyr::summarise(mean = mean(AFDMRemaining),  # calculates the mean of each group
-            sd = sd(AFDMRemaining), # calculates the standard deviation of each group
+      dplyr::summarise(mean = mean(AFDMrem),  # calculates the mean of each group
+            sd = sd(AFDMrem), # calculates the standard deviation of each group
             n = n(),  # calculates the sample size per group
-            SE = sd(AFDMRemaining)/sqrt(n()) # calculates the standard error of each group
+            SE = sd(AFDMrem)/sqrt(n()) # calculates the standard error of each group
             ) %>% 
       ggplot(aes(x = Day , y= mean, group = Treatment,color=Treatment))+
       geom_line(size=1)+ geom_point(size=2)  +
@@ -168,10 +178,10 @@ Treatment <- function(data)
   {
     data%>% # the names of the new data frame and the data frame to be summarised
       group_by(Treatment) %>%   # the grouping variable
-      dplyr::summarise(mean = mean(AFDMRemaining),  # calculates the mean of each group
-                       sd = sd(AFDMRemaining), # calculates the standard deviation of each group
+      dplyr::summarise(mean = mean(AFDMrem),  # calculates the mean of each group
+                       sd = sd(AFDMrem), # calculates the standard deviation of each group
                        n = n(),  # calculates the sample size per group
-                       SE = sd(AFDMRemaining)/sqrt(n()) # calculates the standard error of each group
+                       SE = sd(AFDMrem)/sqrt(n()) # calculates the standard error of each group
       ) %>% 
       ggplot(aes(x = Treatment , y= mean))+
       geom_bar(stat="identity",  position=position_dodge()) +
