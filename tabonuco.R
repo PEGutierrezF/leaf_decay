@@ -8,7 +8,7 @@
 #PEGF
 #--------------------------------------------
 #
-
+library(leafdecay)
 library(tidyr) 
 library(rlang)
 library(dplyr)
@@ -44,7 +44,7 @@ AFDM <- function(data,
                  Treatment,
                  Day,
                  Replicate) {
-# Calculate the control by manupulation
+# Calculate the control by manipulation
   control <- data %>% 
     dplyr::filter(Treatment == "Control") %>%
     dplyr::select({{InitialWt}},{{FinalWt}}) %>%

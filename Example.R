@@ -11,16 +11,26 @@
 
 # Example Clasen-Rodriguez et al. 2019 
 
+library(leafdecay)
+library(tidyr) 
+library(rlang)
+library(dplyr)
+library(plyr)
+library(tidyverse) 
+library(lme4)
+library(broom)
+
+
 leafdecay <- read.csv("LeafLitterDecomp.csv")
 leafdecay
 head(leafdecay)
 
 # Control by manipulation -------------------------------------------------
 
-control <- manipulation(data      = leafdecay,
-                        InitialWt  = Initial_Dry_Weight,
-                        FinalWt = Final_Dry_Weight,
-                        Treatment = Control)
+control <- manipulation(data= leafdecay,
+                        InitialWt= Initial_Dry_Weight,
+                        FinalWt= Final_Dry_Weight,
+                        Treatment= Control)
 control
 
 
@@ -56,10 +66,10 @@ remaining
     
  # Plots -------------------------------------------------------------------
 
-  by_treatment(remaing)
-  by_replicate(remaing)  
-  Replicate(remaing)
-  Treatment(remaing)
-  by_error(remaing)
-  by_errorBar(remaing)
+  by_treatment(remaining)
+  by_replicate(remaining)  
+  replicate(remaining)
+  treatment(remaining)
+  by_site(remaining)
+  by_errorBar(remaining)
 
