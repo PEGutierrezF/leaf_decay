@@ -10,7 +10,7 @@
 #
 
 # Example Clasen-Rodriguez et al. 2019 
-
+install.packages("leafdecay")
 library(leafdecay)
 library(tidyr) 
 library(rlang)
@@ -51,14 +51,14 @@ remaining
 
 # Slope and r_squared  --------------------------------------------------
 
- slope(data  = remaining,
+ slope.k(data  = remaining,
                Treatment  = Treatment, 
                Replicate  = Replicate,
                Day        = Day,
                Ln.AFDMrem = Ln.AFDMrem)
 
 
-   rSquared(data  = remaining,
+rsquared.k(data  = remaining,
          Treatment  = Treatment, 
          Replicate  = Replicate,
          Day        = Day,
@@ -66,10 +66,9 @@ remaining
     
  # Plots -------------------------------------------------------------------
 
-  by_treatment(remaining)
-  by_replicate(remaining)  
-  replicate(remaining)
-  treatment(remaining)
-  by_site(remaining)
-  by_errorBar(remaining)
+plot.A(remaining)
+plot.B(remaining)
+plot.C(remaining)
+plot.D(remaining)
+plot.E(remaining)
 
