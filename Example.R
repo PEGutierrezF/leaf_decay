@@ -10,7 +10,8 @@
 #
 
 # Example Clasen-Rodriguez et al. 2019 
-install.packages("leafdecay")
+
+devtools::install_github("PEGutierrezF/leafdecay")
 library(leafdecay)
 library(tidyr) 
 library(rlang)
