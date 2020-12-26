@@ -52,7 +52,7 @@ remaining
 
 # Slope and r_squared  --------------------------------------------------
 
- slope.k(data  = remaining,
+slope.k(data= remaining,
                Treatment  = Treatment, 
                Replicate  = Replicate,
                Day        = Day,

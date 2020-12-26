@@ -84,7 +84,7 @@ AFDM <- function(data,
 
 # Slope -------------------------------------------------------------------
 
-slope <- function(data,
+slope.k <- function(data,
                   Treatment, 
                   Replicate,
                   Day,
@@ -100,7 +100,7 @@ slope <- function(data,
 # rSquared ----------------------------------------------------------------
 
 
-rSquared <- function(data,
+rsquared.k <- function(data,
                   Treatment, 
                   Replicate,
                   Day,
