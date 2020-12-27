@@ -96,6 +96,21 @@ slope.k <- function(data,
 
 }
 
+# New
+slope.k <- function(data,
+                    Treatment, 
+                    Replicate,
+                    Day,
+                    Ln.AFDMrem){
+  data %>% nest_by(Treatment, Replicate) %>% 
+  mutate(fit = map(data, ~ lm(Ln.AFDMrem ~ Day, data = .x)),tidied = map(fit, tidy)) %>% 
+  unnest(tidied) %>% print(n = Inf)
+}
+
+head(remaining) 
+slope.k(remaining)
+
+
 
 # rSquared ----------------------------------------------------------------
 
