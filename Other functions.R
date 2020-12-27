@@ -134,3 +134,17 @@ AFDM()
 # r_squared <- fitted_models %>% glance(model) %>% print(n = Inf) # Calculate the r-squared and p-value
 # fitted_models %>% augment(model) %>% print(n = Inf) 
 
+
+# All, before do() was superseded 
+
+slope.k <- function(data,
+                    Treatment, 
+                    Replicate,
+                    Day,
+                    Ln.AFDMrem){
+  fitted_models <- data  %>% group_by(Treatment, Replicate) %>% 
+    do(model = lm(Ln.AFDMrem ~ Day, data = .)) 
+  
+  broom::tidy(fitted_models,model) %>% print(n = Inf) # Calculate the slope and estimate
+  
+}
