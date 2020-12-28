@@ -148,3 +148,16 @@ slope.k <- function(data,
   broom::tidy(fitted_models,model) %>% print(n = Inf) # Calculate the slope and estimate
   
 }
+
+
+rsquared.k <- function(data,
+                       Treatment, 
+                       Replicate,
+                       Day,
+                       Ln.AFDMrem){
+  fitted_models <- data  %>% group_by(Treatment, Replicate) %>% 
+    do(model = lm(Ln.AFDMrem ~ Day, data = .)) 
+  
+  broom::glance(fitted_models,model) %>% print(n = Inf) # Calculate the r-squared and p-value
+  
+}

@@ -8,6 +8,7 @@
 #PEGF
 #--------------------------------------------
 #
+
 library(leafdecay)
 library(tidyr) 
 library(rlang)
@@ -88,15 +89,15 @@ slope.k <- function(data,
                     Replicate,
                     Day,
                     Ln.AFDMrem){
-  data %>% nest_by(Treatment, Replicate) %>% 
-  mutate(fit = map(data, ~ lm(Ln.AFDMrem ~ Day, data = .x)),
-         tidied = map(fit, tidy)) %>% 
-    
-  unnest(tidied) %>% print(n = Inf)
+  mod_t <- data %>% nest_by(Treatment, Replicate) %>%
+    mutate(model = list(lm(Ln.AFDMrem ~ Day, data = data))) %>%
+    summarise(tidy_out = list(tidy(model)))
+  unnest(select(mod_t, Treatment, tidy_out)) %>% print(n = Inf)
 }
 
 head(remaining) 
 slope.k(remaining)
+
 
 
 # rSquared ----------------------------------------------------------------
@@ -107,14 +108,15 @@ rsquared.k <- function(data,
                   Replicate,
                   Day,
                   Ln.AFDMrem){
-  fitted_models <- data  %>% group_by(Treatment, Replicate) %>% 
-    do(model = lm(Ln.AFDMrem ~ Day, data = .)) 
-
-  broom::glance(fitted_models,model) %>% print(n = Inf) # Calculate the r-squared and p-value
-
+  mod_g <- data %>% nest_by(Treatment, Replicate) %>%
+    mutate(model = list(lm(Ln.AFDMrem ~ Day, data = data))) %>%
+    summarise(glance_out = list(glance(model)))
+  unnest(select(mod_g, Treatment, glance_out)) %>% print(n = Inf)
 }
- 
- 
+
+head(remaining) 
+rsquared.k(remaining)
+
 # Plots -------------------------------------------------------------------
 
 
