@@ -102,20 +102,19 @@ slope.k(remaining)
 
 # rSquared ----------------------------------------------------------------
 
-
-rsquared.k <- function(data,
-                  Treatment, 
-                  Replicate,
-                  Day,
-                  Ln.AFDMrem){
-  mod_g <- data %>% nest_by(Treatment, Replicate) %>%
-    mutate(model = list(lm(Ln.AFDMrem ~ Day, data = data))) %>%
-    summarise(glance_out = list(glance(model)))
-  unnest(select(mod_g, Treatment, glance_out)) %>% print(n = Inf)
+rsquared.k <- function(data, Treatment, Replicate, Day, Ln.AFDMrem){
+  ln_col <- rlang::as_string(ensym(Ln.AFDMrem))
+  day_col <- rlang::as_string(ensym(Day))
+  data %>% 
+    nest_by({{Treatment}}, {{Replicate}}) %>%
+    mutate(model = list(lm(reformulate(day_col, ln_col), data = data))) %>%
+    summarise(glance_out = list(glance(model)), .groups = 'drop') %>%
+    unnest(glance_out) 
 }
 
 head(remaining) 
 rsquared.k(remaining)
+
 
 # Plots -------------------------------------------------------------------
 
